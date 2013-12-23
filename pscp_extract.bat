@@ -1,0 +1,1 @@
+pscp -r -pw azrael pi@192.168.0.32:/home/pi/suspension c:\Users\Marvin\Documents\pnevmo
