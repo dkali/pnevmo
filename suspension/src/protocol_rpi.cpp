@@ -10,13 +10,3 @@ void pin_init()
         bcm2835_gpio_write(pins[index], LOW);
     }
 }
-
-void pin_mode( gpio_pin pin, int mode)
-{
-    bcm2835_gpio_fsel(pin, mode);
-}
-
-void pin_set( gpio_pin pin, int val )
-{
-    bcm2835_gpio_write(pin, val);
-}

@@ -5,12 +5,7 @@
 
 const int PIN_NUM = 18;
 
-typedef RPiGPIOPin gpio_pin;
-
-#define MODE_OUTPUT BCM2835_GPIO_FSEL_OUTP
-#define MODE_INPUT BCM2835_GPIO_FSEL_INPT
-
-static gpio_pin pins[PIN_NUM] = { RPI_V2_GPIO_P1_03,
+static RPiGPIOPin pins[PIN_NUM] = { RPI_V2_GPIO_P1_03,
                     RPI_V2_GPIO_P1_05,
                     RPI_V2_GPIO_P1_07,
                     RPI_V2_GPIO_P1_08,
@@ -29,7 +24,5 @@ static gpio_pin pins[PIN_NUM] = { RPI_V2_GPIO_P1_03,
                     RPI_V2_GPIO_P1_26 };
 
 void pin_init();
-void pin_mode( gpio_pin pin, int mode );
-void pin_set( gpio_pin pin, int val );
 
 #endif //PROTOCOL_RPI_H
