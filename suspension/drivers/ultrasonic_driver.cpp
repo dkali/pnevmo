@@ -26,7 +26,7 @@ float US_ranger::get_distance()
     bcm2835_gpio_write( sig, LOW );
     bcm2835_delayMicroseconds( 2 );
     bcm2835_gpio_write( sig, HIGH );
-    bcm2835_delayMicroseconds( 5 );
+    bcm2835_delayMicroseconds( 20 );
     // bcm2835_delay( 250 );
     bcm2835_gpio_write( sig, LOW );
 

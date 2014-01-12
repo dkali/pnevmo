@@ -2,7 +2,8 @@
 
 g++ -std=c++0x -c -o obj/protocol_rpi.o src/protocol_rpi.cpp
 g++ -std=c++0x -c -o obj/ultrasonic_driver.o drivers/ultrasonic_driver.cpp
+g++ -std=c++0x -c -o obj/mt12232b_driver.o drivers/mt12232b_driver.cpp
 g++ -std=c++0x -c -o obj/util.o src/util.cpp
 g++ -std=c++0x -c -o obj/main.o src/main.cpp
 
-g++ -std=c++0x -o susp obj/protocol_rpi.o obj/util.o obj/ultrasonic_driver.o obj/main.o -l bcm2835
+g++ -std=c++0x -o susp obj/protocol_rpi.o obj/util.o obj/ultrasonic_driver.o obj/mt12232b_driver.o obj/main.o -l bcm2835
