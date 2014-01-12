@@ -232,6 +232,47 @@ void MT12232B::cmd_display_onoff(bool on)
     {
         printf("cmd DISPLAY OFF\n");
         write_byte(0xAE, 0, 1, 1);
-        clear_all_pins();   
+        clear_all_pins();
     }
+}
+
+// pnum 0...3, page number
+void MT12232B::cmd_set_page(int pnum)
+{
+    if (pnum <0 && pnum >3)
+    {
+        printf("ERROR: cmd_set_page bad argument: %d", pnum);
+        return;
+    }
+
+    printf("cmd SET PAGE %d\n", pnum);
+    write_byte(pnum|0xB8, 0, 1, 1); //Установка текущей страницы для обоих кристаллов индикатора
+    clear_all_pins();
+}
+
+
+// column_address 0...79
+void MT12232B::cmd_set_address(int column_address)
+{
+    if (column_address <0 && column_address >79)
+    {
+        printf("ERROR: cmd_set_address bad argument: %d", column_address);
+        return;
+    }
+
+    printf("cmd SET ADDRESS %d\n", column_address);
+    
+    bitset<8> b(column_address);
+    // printf("%s\n", b.to_string().c_str());
+
+    stringstream ss;
+    ss << "0x" << hex << uppercase << b.to_ulong();
+
+    string hexStr(ss.str());
+    printf("hex str: %s\n", hexStr.c_str());
+
+    int iCmd;
+    ss >> iCmd;
+    write_byte(iCmd, 0, 1, 1);
+    clear_all_pins();
 }

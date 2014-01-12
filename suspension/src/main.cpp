@@ -32,6 +32,26 @@ int main()
 
     display.turn_on();
 
+    display.cmd_set_page(0); //Установка текущей страницы для обоих кристаллов индикатора
+    display.cmd_set_address(0);
+
+    display.write_byte( 0xAA, 1, 1, 0);
+    display.write_byte( 0x55, 1, 1, 0);
+
+    // for(int p=0; p<4; p++) { //Цикл по всем 4-м страницам индикатора
+    //     display.cmd_set_page(p); //Установка текущей страницы для обоих кристаллов индикатора
+    //     display.cmd_set_address(0); //Установка текущего адреса для записи данных в 0
+    //     for(int c=0; c<61; c++) { //Цикл вывода данных в левую половину индикатора
+    //         display.write_byte( Logo122[p][c], 1, 1, 0); //Вывод очередного байта в индикатор
+    //     }
+    //     for(int c=61; c<122; c++) { //Цикл вывода данных в правую половину индикатора
+    //        display.write_byte( Logo122[p][c], 1, 0, 1); //Вывод очередного байта в индикатор
+    //     }
+    // }
+
+    // bcm2835_delay(5000);
+    // display.cmd_display_onoff(false);
+
     bcm2835_close();
     return 0;
 }
