@@ -32,12 +32,6 @@ int main()
 
     display.turn_on();
 
-    display.cmd_set_page(0); //Установка текущей страницы для обоих кристаллов индикатора
-    display.cmd_set_address(0);
-
-    display.write_byte( 0xAA, 1, 1, 0);
-    display.write_byte( 0x55, 1, 1, 0);
-
     // for(int p=0; p<4; p++) { //Цикл по всем 4-м страницам индикатора
     //     display.cmd_set_page(p); //Установка текущей страницы для обоих кристаллов индикатора
     //     display.cmd_set_address(0); //Установка текущего адреса для записи данных в 0
@@ -49,7 +43,58 @@ int main()
     //     }
     // }
 
-    // bcm2835_delay(5000);
+    // bcm2835_delay(3000);
+   
+    int j = 0;
+    while(j < 10)
+    {
+        int page;
+        for (page=0;page<4;page++)
+        {
+            display.cmd_set_page(page); //Установка текущей страницы для обоих кристаллов индикатора
+            display.cmd_set_address(0);
+
+            int i;
+            for (i=0;i<80;i++)
+            {
+                display.write_byte( 0xAA+i+j, 1, 1, 1);
+                // display.write_byte( 0xAA+i+j, 1, 0, 1);
+            }
+            bcm2835_delay(20);
+        };
+        j++;
+    }
+    // display.write_byte( 0x55, 1, 1, 0);
+    // display.write_byte( 0x0F, 1, 1, 0);
+
+    for( int k = 0; k < 32; k++ )
+    {
+        display.cmd_display_start_line(k);
+        bcm2835_delay(200);
+    }
+
+    display.cmd_adc_select(1);
+
+    j = 0;
+    while(j < 10)
+    {
+        int page;
+        for (page=0;page<4;page++)
+        {
+            display.cmd_set_page(page); //Установка текущей страницы для обоих кристаллов индикатора
+            display.cmd_set_address(0);
+
+            int i;
+            for (i=0;i<80;i++)
+            {
+                display.write_byte( 0xAA+i+j, 1, 1, 1);
+                // display.write_byte( 0xAA+i+j, 1, 0, 1);
+            }
+            bcm2835_delay(20);
+        };
+        j++;
+    }
+
     // display.cmd_display_onoff(false);
 
     bcm2835_close();

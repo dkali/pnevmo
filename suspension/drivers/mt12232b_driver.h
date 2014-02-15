@@ -32,7 +32,6 @@ private:
     RPiGPIOPin lcd_databus_pins[8];
     
     void write_to_bus(int byte);
-    string int_to_binstr(int byte);
 
 public:
     MT12232B();
@@ -44,10 +43,10 @@ public:
     void init_RES( RPiGPIOPin pin );
 
     void turn_on();
-    void rutn_off();
 
     void cmd_reset();
     void cmd_rmw();
+    void cmd_rmw_end();
     void cmd_static_drive(bool bEnable);
     void cmd_duty_select();
     void cmd_display_start_line(int linenum);
