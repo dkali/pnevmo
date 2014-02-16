@@ -1,6 +1,7 @@
 #include "../drivers/ultrasonic_driver.h"
 #include "../drivers/mt12232b_driver.h"
 #include "../include/util.h"
+#include <cstdlib>
 
 using namespace std;
 
@@ -32,21 +33,23 @@ int main()
 
     display.turn_on();
 
-    // for(int p=0; p<4; p++) { //Цикл по всем 4-м страницам индикатора
-    //     display.cmd_set_page(p); //Установка текущей страницы для обоих кристаллов индикатора
-    //     display.cmd_set_address(0); //Установка текущего адреса для записи данных в 0
-    //     for(int c=0; c<61; c++) { //Цикл вывода данных в левую половину индикатора
-    //         display.write_byte( Logo122[p][c], 1, 1, 0); //Вывод очередного байта в индикатор
-    //     }
-    //     for(int c=61; c<122; c++) { //Цикл вывода данных в правую половину индикатора
-    //        display.write_byte( Logo122[p][c], 1, 0, 1); //Вывод очередного байта в индикатор
-    //     }
-    // }
+    // Отображаем лого МЕЛТа
+    for(int p=0; p<4; p++) { //Цикл по всем 4-м страницам индикатора
+        display.cmd_set_page(p); //Установка текущей страницы для обоих кристаллов индикатора
+        display.cmd_set_address(0); //Установка текущего адреса для записи данных в 0
+        for(int c=0; c<61; c++) { //Цикл вывода данных в левую половину индикатора
+            display.write_byte( Logo122[p][c], 1, 1, 0); //Вывод очередного байта в индикатор
+        }
+        for(int c=61; c<122; c++) { //Цикл вывода данных в правую половину индикатора
+           display.write_byte( Logo122[p][c], 1, 0, 1); //Вывод очередного байта в индикатор
+        }
+    }
 
-    // bcm2835_delay(3000);
+    bcm2835_delay(3000);
    
+    // Бежим влево
     int j = 0;
-    while(j < 10)
+    while(j < 1000)
     {
         int page;
         for (page=0;page<4;page++)
@@ -58,23 +61,28 @@ int main()
             for (i=0;i<80;i++)
             {
                 display.write_byte( 0xAA+i+j, 1, 1, 1);
-                // display.write_byte( 0xAA+i+j, 1, 0, 1);
             }
-            bcm2835_delay(20);
         };
+        //bcm2835_delay(20);
         j++;
     }
+
     // display.write_byte( 0x55, 1, 1, 0);
     // display.write_byte( 0x0F, 1, 1, 0);
 
+    // Отражаем слева направо
+    display.cmd_adc_select(1);
+
+    // Бежим вверх
     for( int k = 0; k < 32; k++ )
     {
         display.cmd_display_start_line(k);
-        bcm2835_delay(200);
+        bcm2835_delay(50);
     }
 
-    display.cmd_adc_select(1);
+    display.cmd_adc_select(0);
 
+    // Бежим вправо
     j = 0;
     while(j < 10)
     {
@@ -88,11 +96,75 @@ int main()
             for (i=0;i<80;i++)
             {
                 display.write_byte( 0xAA+i+j, 1, 1, 1);
-                // display.write_byte( 0xAA+i+j, 1, 0, 1);
             }
-            bcm2835_delay(20);
         };
         j++;
+        bcm2835_delay(20);
+    }
+
+    // Шумим
+    j = 0;
+    while(j < 1000)
+    {
+        int page;
+        for (page=0;page<4;page++)
+        {
+            display.cmd_set_page(page); //Установка текущей страницы для обоих кристаллов индикатора
+            display.cmd_set_address(0);
+
+            int i;
+            for (i=0;i<80;i++)
+            {
+                display.write_byte( rand() % 255, 1, 1, 1);
+            }
+        };
+        j++;
+    }
+
+    // Ч0рный экран
+    int page;
+    for (page=0;page<4;page++)
+    {
+        display.cmd_set_page(page); //Установка текущей страницы для обоих кристаллов индикатора
+        display.cmd_set_address(0);
+
+        int i;
+        for (i=0;i<80;i++)
+        {
+            display.write_byte( 0xFF, 1, 1, 1);
+        }
+    };
+
+    // Шумим Мелт
+    j = 0;
+    while(true)
+    {
+        int page;
+        for (page=0;page<4;page++)
+        {
+            display.cmd_set_page(page); //Установка текущей страницы для обоих кристаллов индикатора
+            display.cmd_set_address(0);
+
+            int i;
+            for (i=0;i<80;i++)
+            {
+                display.write_byte( rand() % 255, 1, 1, 1);
+            }
+        };
+        j++;
+
+        bcm2835_delay(20);
+        for(int p=0; p<4; p++) { //Цикл по всем 4-м страницам индикатора
+            display.cmd_set_page(p); //Установка текущей страницы для обоих кристаллов индикатора
+            display.cmd_set_address(0); //Установка текущего адреса для записи данных в 0
+            for(int c=0; c<61; c++) { //Цикл вывода данных в левую половину индикатора
+                display.write_byte( Logo122[p][c], 1, 1, 0); //Вывод очередного байта в индикатор
+            }
+            for(int c=61; c<122; c++) { //Цикл вывода данных в правую половину индикатора
+               display.write_byte( Logo122[p][c], 1, 0, 1); //Вывод очередного байта в индикатор
+            }
+        }
+        bcm2835_delay(10);
     }
 
     // display.cmd_display_onoff(false);
