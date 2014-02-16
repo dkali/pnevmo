@@ -44,7 +44,9 @@ int main()
 
     // draw_distance( &display, &ranger );
 
-    display.print_text( "Hello world!", 1);
+    display.print_text( "Hello Neo,", 0);
+    display.print_text( "Matrix has you", 1);
+    display.print_text( "follow the rabbit", 3);
 
 
 

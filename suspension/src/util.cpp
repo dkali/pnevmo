@@ -105,27 +105,27 @@ void draw_alphabet( MT12232B *display ){
     display->cmd_set_page(0);
     display->cmd_set_address(0);
     
-    unsigned char xChar;
-    for (xChar=' '; xChar<(' ')+10; xChar++) display->print_char(xChar, 1, 0);
-    for (xChar=' '+10; xChar<(' ')+20; xChar++) display->print_char(xChar, 0, 1);
+    // unsigned char xChar;
+    // for (xChar=' '; xChar<(' ')+10; xChar++) display->print_char(xChar, 1, 0);
+    // for (xChar=' '+10; xChar<(' ')+20; xChar++) display->print_char(xChar, 0, 1);
 
-    display->cmd_set_page(1);
-    display->cmd_set_address(0);
+    // display->cmd_set_page(1);
+    // display->cmd_set_address(0);
     
-    for (xChar=' '+20; xChar<(' ')+30; xChar++) display->print_char(xChar, 1, 0);
-    for (xChar=' '+30; xChar<(' ')+40; xChar++) display->print_char(xChar, 0, 1);
+    // for (xChar=' '+20; xChar<(' ')+30; xChar++) display->print_char(xChar, 1, 0);
+    // for (xChar=' '+30; xChar<(' ')+40; xChar++) display->print_char(xChar, 0, 1);
 
-    display->cmd_set_page(2);
-    display->cmd_set_address(0);
+    // display->cmd_set_page(2);
+    // display->cmd_set_address(0);
 
-    for (xChar=' '+40; xChar<(' ')+50; xChar++) display->print_char(xChar, 1, 0);
-    for (xChar=' '+50; xChar<(' ')+60; xChar++) display->print_char(xChar, 0, 1);
+    // for (xChar=' '+40; xChar<(' ')+50; xChar++) display->print_char(xChar, 1, 0);
+    // for (xChar=' '+50; xChar<(' ')+60; xChar++) display->print_char(xChar, 0, 1);
 
-    display->cmd_set_page(3);
-    display->cmd_set_address(0);
+    // display->cmd_set_page(3);
+    // display->cmd_set_address(0);
 
-    for (xChar=' '+60; xChar<(' ')+70; xChar++) display->print_char(xChar, 1, 0);
-    for (xChar=' '+70; xChar<(' ')+80; xChar++) display->print_char(xChar, 0, 1);
+    // for (xChar=' '+60; xChar<(' ')+70; xChar++) display->print_char(xChar, 1, 0);
+    // for (xChar=' '+70; xChar<(' ')+80; xChar++) display->print_char(xChar, 0, 1);
 }
 
 
@@ -136,18 +136,14 @@ void draw_distance( MT12232B *display, US_ranger *ranger ){
         do {
             dist = ranger->get_distance();
         } while (dist <= 0);
-        display->cmd_set_page(0);
-        display->cmd_set_address(0);
-        char buffer[50];
-        int ln;
-        ln = sprintf(buffer, "%6.2f cm", dist*100);
-        for (int ch=0; ch<ln; ch++)
-        {
-            display->print_char(buffer[ch], 1, 0); // TODO: rework with draw_text
-        }
 
+        char buffer[50];
+        sprintf(buffer, "%6.2f cm", dist*100);
+        display->print_text( buffer, 0);
+
+        //progress bar
         display->clear_line(1);
         display->cmd_set_address(0);
-        for (int gg=0; gg<dist*61; gg++) display->write_byte( 0xAA, 1, 1, 0); // TODO: rework with draw_text
+        for (int gg=0; gg<dist*100; gg++) display->write_byte( 0xAA, 1, gg>61?0:1, gg>61?1:0); // something wrong here
     }
 }

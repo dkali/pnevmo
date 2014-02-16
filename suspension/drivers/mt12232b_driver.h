@@ -57,7 +57,7 @@ public:
     void write_byte(int byte, int cd, int l, int r); //Процедура выдачи байта в индикатор
     void clear_all_pins();
 
-    void print_char(unsigned char xChar, int l, int r);
+    void print_char(unsigned char xChar, int l, int r, int bits_written);
     void print_text( const char *xStr, unsigned int line_num);
     void clear_screen();
     void clear_line( unsigned int line_num );

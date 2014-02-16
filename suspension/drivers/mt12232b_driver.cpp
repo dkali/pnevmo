@@ -242,7 +242,7 @@ void MT12232B::cmd_set_address(int column_address)
 
 // ============== Print text ================
 
-void MT12232B::print_char(unsigned char xChar, int l, int r){
+void MT12232B::print_char(unsigned char xChar, int l, int r, int bits_written = 0){
     unsigned char symbol[8];
 
     for (int i=0; i<8; i++) symbol[i] = fontdata_8x8[xChar*8 + i];
@@ -252,7 +252,11 @@ void MT12232B::print_char(unsigned char xChar, int l, int r){
     {
         int xByte = 0;
         for (row=0; row<7; row++) xByte |= ((symbol[row] >> (7-col)) & 1) << (row); //rotate symbol. Trust me.
-        write_byte(xByte, 1, l, r);
+
+        int bw = bits_written + col;
+        if ( bw == 62 ) cmd_set_address(0); //reset position to write on next crystal
+
+        write_byte(xByte, 1, bw>61?0:1, bw>61?1:0);
     }
 }
 
@@ -270,12 +274,9 @@ void MT12232B::print_text( const char *xStr, unsigned int line_num){
 
     int bits_written = 0;
     int len = strlen(xStr);
-    printf("len: %d\n", len);
     for (int ch=0; ch<len; ch++)
     {
-        printf("char: %c\n", xStr[ch]);
-        // if (ch == 62) cmd_set_address(0);
-        print_char(xStr[ch], ch>61?0:1, ch>61?1:0);
+        print_char(xStr[ch], ch>61?0:1, ch>61?1:0, bits_written);
         bits_written += 8;
     }
 }
