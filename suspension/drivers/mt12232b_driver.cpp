@@ -120,6 +120,7 @@ void MT12232B::cmd_reset()
     clear_all_pins();
 }
 
+
 void MT12232B::cmd_rmw()
 {
     // printf("cmd RMW\n");
@@ -127,12 +128,14 @@ void MT12232B::cmd_rmw()
     clear_all_pins();
 }
 
+
 void MT12232B::cmd_rmw_end()
 {
     // printf("cmd RMW END\n");
     write_byte(0xEE, 0, 1, 1);
     clear_all_pins();
 }
+
 
 void MT12232B::cmd_static_drive(bool bEnable)
 {
@@ -149,6 +152,7 @@ void MT12232B::cmd_static_drive(bool bEnable)
     clear_all_pins();
 }
 
+
 void MT12232B::cmd_duty_select()
 {
     // printf("cmd DUTY SELECT\n");
@@ -156,20 +160,22 @@ void MT12232B::cmd_duty_select()
     clear_all_pins();
 }
 
-// linenum 0...31
-void MT12232B::cmd_display_start_line(int linenum)
+
+// line_num 0...31
+void MT12232B::cmd_display_start_line(unsigned int line_num)
 {
-    if (linenum < 0 || linenum > 31 )
+    if ( line_num > 31 )
     {
-        printf("ERROR: cmd_display_start_line have invalid argument: %d", linenum);
+        printf("ERROR: cmd_display_start_line have invalid argument: %d\n", line_num);
         return;
     }
 
     int iCmd;
-    iCmd = linenum | (1 << 6) | (1 << 7);
+    iCmd = line_num | (1 << 6) | (1 << 7);
     write_byte(iCmd, 0, 1, 1);
     clear_all_pins();
 }
+
 
 // direction 0 - direct correspondence
 // direction 1 - inverse correspondence
@@ -177,7 +183,7 @@ void MT12232B::cmd_adc_select(int direction)
 {
     if (direction != 1 && direction != 0)
     {
-        printf("ERROR: cmd_adc_select invalid argument: %d", direction);
+        printf("ERROR: cmd_adc_select invalid argument: %d\n", direction);
         return;
     }
 
@@ -200,12 +206,13 @@ void MT12232B::cmd_display_onoff(bool on)
     clear_all_pins();
 }
 
+
 // pnum 0...3, page number
 void MT12232B::cmd_set_page(int pnum)
 {
     if (pnum <0 && pnum >3)
     {
-        printf("ERROR: cmd_set_page bad argument: %d", pnum);
+        printf("ERROR: cmd_set_page bad argument: %d\n", pnum);
         return;
     }
 
@@ -220,7 +227,7 @@ void MT12232B::cmd_set_address(int column_address)
 {
     if (column_address <0 && column_address >79)
     {
-        printf("ERROR: cmd_set_address bad argument: %d", column_address);
+        printf("ERROR: cmd_set_address bad argument: %d\n", column_address);
         return;
     }
 
@@ -230,4 +237,79 @@ void MT12232B::cmd_set_address(int column_address)
     iCmd = column_address;
     write_byte(iCmd, 0, 1, 1);
     clear_all_pins();
+}
+
+
+// ============== Print text ================
+
+void MT12232B::print_char(unsigned char xChar, int l, int r){
+    unsigned char symbol[8];
+
+    for (int i=0; i<8; i++) symbol[i] = fontdata_8x8[xChar*8 + i];
+
+    int col, row;
+    for (col=0; col<8; col++)
+    {
+        int xByte = 0;
+        for (row=0; row<7; row++) xByte |= ((symbol[row] >> (7-col)) & 1) << (row); //rotate symbol. Trust me.
+        write_byte(xByte, 1, l, r);
+    }
+}
+
+
+void MT12232B::print_text( const char *xStr, unsigned int line_num){
+    unsigned char symbol[8];
+
+    if (line_num > 3 ){
+        printf("ERROR: print_text has incorrect line_num: %d\n", line_num);
+        return;
+    }
+
+    clear_line(line_num);
+    cmd_set_address(0);
+
+    int bits_written = 0;
+    int len = strlen(xStr);
+    printf("len: %d\n", len);
+    for (int ch=0; ch<len; ch++)
+    {
+        printf("char: %c\n", xStr[ch]);
+        // if (ch == 62) cmd_set_address(0);
+        print_char(xStr[ch], ch>61?0:1, ch>61?1:0);
+        bits_written += 8;
+    }
+}
+
+
+void MT12232B::clear_screen(){
+    int page;
+    for (page=0; page<4; page++)
+    {
+        cmd_set_page(page); //Установка текущей страницы для обоих кристаллов индикатора
+        cmd_set_address(0);
+
+        int i;
+        for (i=0; i<61; i++)
+        {
+            write_byte( 0x00, 1, 1, 1);
+        }
+    };
+}
+
+
+void MT12232B::clear_line( unsigned int line_num ){
+    if ( line_num > 3 )
+    {
+        printf("ERROR: clear_line has bad line_num: %d\n", line_num);
+        return;
+    }
+
+    cmd_set_page(line_num);
+    cmd_set_address(0);
+
+    int i;
+    for (i=0; i<61; i++)
+    {
+        write_byte( 0x00, 1, 1, 1);
+    }
 }

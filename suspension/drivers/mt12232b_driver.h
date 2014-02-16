@@ -4,9 +4,8 @@
 #include "../include/protocol_rpi.h"
 #include <stdio.h>
 #include <iostream>
-#include <sstream>
-#include <bitset>
-#include <string>
+#include <string.h>
+#include "myfont.h"
 
 using namespace std;
 
@@ -49,7 +48,7 @@ public:
     void cmd_rmw_end();
     void cmd_static_drive(bool bEnable);
     void cmd_duty_select();
-    void cmd_display_start_line(int linenum);
+    void cmd_display_start_line(unsigned int line_num);
     void cmd_adc_select(int direction);
     void cmd_display_onoff(bool on);
     void cmd_set_page(int pnum);
@@ -57,6 +56,11 @@ public:
     
     void write_byte(int byte, int cd, int l, int r); //Процедура выдачи байта в индикатор
     void clear_all_pins();
+
+    void print_char(unsigned char xChar, int l, int r);
+    void print_text( const char *xStr, unsigned int line_num);
+    void clear_screen();
+    void clear_line( unsigned int line_num );
 };
 
 const int Logo122[4][122]=//122x32 pixel, каждые 8 вертикальных точек собраны в байт
